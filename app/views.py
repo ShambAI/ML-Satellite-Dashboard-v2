@@ -140,7 +140,7 @@ class my_home():
         alldept = ee.Image('users/ashamba/allDepartments_v0')
         RGB = ee.Image('users/ashamba/RGB')
 
-        ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1)
+        ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1,engine='openpyxl',)
         ben_yield = ben_yield.interpolate()
         ben_yield['Departement'] = ben_yield['Departement'].str.title()
         ben_yield['Commune'] = ben_yield['Commune'].str.title()
@@ -155,7 +155,7 @@ class my_home():
         ben_yield.loc[(ben_yield.Commune == 'Ndali'), 'Commune'] = "N'Dali"
         ben_yield.loc[(ben_yield.Commune == 'Ouesse'), 'Commune'] = 'Ouèssè'
 
-        ben_nursery = pd.read_excel("./Data/Nurseries.xlsx")
+        ben_nursery = pd.read_excel("./Data/Nurseries.xlsx",engine='openpyxl',)
 
         ben_nursery['Commune'] = ben_nursery['Commune'].str.title()
         ben_nursery['Owner'] = ben_nursery['Owner'].str.title()
@@ -1056,7 +1056,6 @@ class my_home():
         layer2.add_to(m)
 
         m.add_child(folium.LayerControl())
-
 
 
         m=m._repr_html_()
