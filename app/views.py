@@ -615,9 +615,7 @@ class my_home():
 
             sorted_by_second = sorted(z_list, reverse = True, key=lambda tup: tup[1])
             list1, _ = zip(*sorted_by_second)
-            # position = list1.index(name)
-
-            position = 1
+            position = list1.index(name)
             my_dict = {'0': "highest", '1': "2nd", '2': "3rd", '3': "4th", '4': "5th", '5': "6th", '6': "7th", '7': "8th", '8': "9th", '9': "10th", '10': "11th", '11':"lowest"}
 
             pred_dept_data = []
@@ -734,7 +732,7 @@ class my_home():
                         </head>
                         <body>
                             <h2>{0}</h2>
-                            <h4>In 2020, {0} was ranked <b>{5}</b> among Benin departments in terms of total cashew yield according to the TNS Yield Survey.</h4>
+                            <h4>In 2020, {0} was ranked <b>{7}</b> among Benin departments in terms of total cashew yield according to the TNS Yield Survey.</h4>
                             <table>
                             <tr>
                                 <th></th>
@@ -832,8 +830,7 @@ class my_home():
 
             sorted_by_second2 = sorted(z_list_2, reverse = True, key=lambda tup: tup[1])
             list2, _ = zip(*sorted_by_second2)
-            # position2 = list2.index(name)
-            position2 = 2        
+            position2 = list2.index(name)          
             my_dict_communes = {'1': 'highest',
                     '2': '2nd',
                     '3': '3rd',
