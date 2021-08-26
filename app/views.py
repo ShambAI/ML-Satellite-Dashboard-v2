@@ -4,6 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import numpy as np
+import os
 import geojson
 import folium
 from django import template
