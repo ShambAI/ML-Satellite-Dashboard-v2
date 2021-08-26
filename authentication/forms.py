@@ -74,6 +74,13 @@ class ForgotPassword(forms.ModelForm):
         )
     )
 
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise ValidationError({"email": "Email does not exists"})
+
+        return self.cleaned_data
+
     class Meta:
         model = User
         fields = ('email',)
