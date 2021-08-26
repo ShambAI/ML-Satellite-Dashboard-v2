@@ -135,7 +135,7 @@ STATICFILES_DIRS = (
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'damilola@contractor.tns.org'
+EMAIL_HOST_USER = 'ashamba@contractor.tns.org'
 EMAIL_HOST_PASSWORD = 'F@ther123'
 EMAIL_PORT = 587
 

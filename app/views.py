@@ -140,7 +140,7 @@ class my_home():
         alldept = ee.Image('users/ashamba/allDepartments_v0')
         RGB = ee.Image('users/ashamba/RGB')
 
-        ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1, engine='openpyxl',)
+        ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1)
         ben_yield = ben_yield.interpolate()
         ben_yield['Departement'] = ben_yield['Departement'].str.title()
         ben_yield['Commune'] = ben_yield['Commune'].str.title()
@@ -155,45 +155,7 @@ class my_home():
         ben_yield.loc[(ben_yield.Commune == 'Ndali'), 'Commune'] = "N'Dali"
         ben_yield.loc[(ben_yield.Commune == 'Ouesse'), 'Commune'] = 'Ouèssè'
 
-        # basemaps = {
-        #             'Google Maps': folium.TileLayer(
-        #                 tiles = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-        #                 attr = 'Google',
-        #                 name = 'Google Maps',
-        #                 overlay = True,
-        #                 control = True
-        #             ),
-        #             'Google Satellite': folium.TileLayer(
-        #                 tiles = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-        #                 attr = 'Google',
-        #                 name = 'Google Satellite',
-        #                 overlay = True,
-        #                 control = True
-        #             ),
-        #             'Google Terrain': folium.TileLayer(
-        #                 tiles = 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-        #                 attr = 'Google',
-        #                 name = 'Google Terrain',
-        #                 overlay = True,
-        #                 control = True
-        #             ),
-        #             'Google Satellite Hybrid': folium.TileLayer(
-        #                 tiles = 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-        #                 attr = 'Google',
-        #                 name = 'Google Satellite',
-        #                 overlay = True,
-        #                 control = True
-        #             ),
-        #             'Esri Satellite': folium.TileLayer(
-        #                 tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        #                 attr = 'Esri',
-        #                 name = 'Esri Satellite',
-        #                 overlay = True,
-        #                 control = True
-        #             )
-        #         }
-
-        ben_nursery = pd.read_excel("./Data/Nurseries.xlsx", engine='openpyxl',)
+        ben_nursery = pd.read_excel("./Data/Nurseries.xlsx")
 
         ben_nursery['Commune'] = ben_nursery['Commune'].str.title()
         ben_nursery['Owner'] = ben_nursery['Owner'].str.title()
@@ -204,7 +166,7 @@ class my_home():
 
         with open("ben_adm0.json", errors="ignore") as f:
             benin_adm0_json = geojson.load(f)
-            
+
         with open("ben_adm1.json") as f:
             benin_adm1_json = geojson.load(f)
 
@@ -255,6 +217,7 @@ class my_home():
                         tiles = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                         attr = 'Google',
                         name = 'Maps',
+                        max_zoom =20,
                         overlay = True,
                         control = False
                     ),
@@ -262,6 +225,7 @@ class my_home():
                         tiles = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
                         attr = 'Google',
                         name = 'Satellite',
+                        max_zoom = 20,
                         overlay = True,
                         show=False,
                         control = True
@@ -294,7 +258,7 @@ class my_home():
 
         m = folium.Map(
             location=[9.0, 2.4],
-            zoom_start=7,
+            zoom_start=8,
             tiles = None
         )
 
@@ -306,18 +270,18 @@ class my_home():
         def highlight_function(feature):
             return {"fillColor": "#ffaf00", "color": "green", "weight": 3, "dashArray": "1, 1"}
 
-        plantation_cluster = MarkerCluster(name="Benin Plantation").add_to(m)
+        plantation_cluster = MarkerCluster(name="Benin Plantations").add_to(m)
 
-        for i in range(1,11):
+        for i in range(1,13):
             with open(f"geojson_data/{i}.geojson") as f:
                 plantation_json = geojson.load(f)
-                
+
             plant_geojson  = folium.GeoJson(data=plantation_json,
                                             name='Benin-Adm0 Department',
-                                            zoom_on_click = True,
-                                            highlight_function = highlight_function)
+                                            zoom_on_click = True)
+        #                                     highlight_function = highlight_function)
             plant_geojson.add_to(plantation_cluster)
-            
+
             features = plantation_json["features"][0]
             s = shape(features["geometry"])
             centre = s.centroid
@@ -334,7 +298,7 @@ class my_home():
                         <a href="https://www.technoserve.org/our-work/agriculture/cashew/?_ga=2.159985149.1109250972.1626437600-1387218312.1616379774"target="_blank">click link to website</a>
                         </div>''').add_to(plantation_cluster)
 
-        marker_cluster = MarkerCluster(name="Benin-Nursery Information").add_to(m)
+        marker_cluster = MarkerCluster(name="Nursery Information").add_to(m)
 
         for i in range(len(ben_nursery)):
             folium.Marker(location= [ben_nursery[i:i+1]['Latitude'].values[0], ben_nursery[i:i+1]['Longitude'].values[0]],
@@ -351,6 +315,54 @@ class my_home():
                         <img src="https://gumlet.assettype.com/deshdoot/import/2019/12/tripXOXO-e1558439144643.jpg?w=1200&h=750&auto=format%2Ccompress&fit=max" width="200" height="70">
                         </div>'''.format(ben_nursery[i:i+1].Commune.values[0], ben_nursery[i:i+1].Owner.values[0], ben_nursery[i:i+1]['Area (ha)'].values[0], ben_nursery[i:i+1]['Numebr of Plants'].values[0])).add_to(marker_cluster)
 
+            
+        drone1 = 'drone1/drone1.png'
+        drone2 = 'drone2/drone2.png'
+
+        feature_group = folium.map.FeatureGroup(name='Drone Images')
+        if not os.path.isfile(drone1):
+            print(f"Could not find {drone1}")
+        else:
+            img = folium.raster_layers.ImageOverlay(
+                name="SW1",
+                image=drone1,
+                bounds=[[9.45941126, 2.63917854], [9.45440760, 2.64878300]],
+                opacity=1.0,
+                interactive=True,
+                cross_origin=False,
+                zindex=1,
+            )
+
+            folium.Popup("I am an image 1").add_to(img)
+            feature_group.add_child(img)
+            
+        if not os.path.isfile(drone2):
+            print(f"Could not find {drone2}")
+        else:
+            img2 = folium.raster_layers.ImageOverlay(
+                name="SW2",
+                image=drone2,
+                bounds=[[9.89726770, 3.16071852], [9.89477856, 3.16551109]],
+                opacity=1.0,
+                interactive=True,
+                cross_origin=False,
+                zindex=1,
+            )
+
+            folium.Popup("I am an image 2").add_to(img2)
+            feature_group.add_child(img2)
+            feature_group.add_to(m)
+            
+        feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
+        for i in range(1,3):
+            with open(f"drone{i}/Tree Crowns.geojson") as f:
+                crown_json = geojson.load(f)
+            crown_geojson  = folium.GeoJson(data=crown_json,
+                                            name='Tree Tops',
+                                            zoom_on_click = True)
+            feature_group2.add_child(crown_geojson)
+        feature_group2.add_to(m)
+            
 
         def add_ee_layer(self, ee_image_object, vis_params, name):
             map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
@@ -363,7 +375,11 @@ class my_home():
             ).add_to(self)
 
         folium.Map.add_ee_layer = add_ee_layer   
-        m.add_ee_layer(alldept, {'min':0, 'max': 4, 'palette': "black, green, white, gray"}, 'Benin-Caju Prediction')
+
+        zones = alldept.eq(1)
+        zones = zones.updateMask(zones.neq(0));
+
+        m.add_ee_layer(zones, {'palette': "red"}, 'Satellite Prediction')
 
 
 
@@ -380,10 +396,10 @@ class my_home():
 
         for feature in temp_geojson0.data['features']:
             # GEOJSON layer consisting of a single feature
-            
+
             y0 = dtstats_df1[dtstats_df1['Country']=='Benin']['Districts']
             # getting values against each value of y
-                
+
             pred_ben_data = []
             pred_ground_ben_data = [['Departments', 'Satellite Prediction', 'Ground Data Estimate']]
             for y in y0:
@@ -393,7 +409,7 @@ class my_home():
                 pred_ground_ben_data.append([y, x, x_new*100])
 
             temp_layer0 = folium.GeoJson(feature,  zoom_on_click = True, highlight_function = highlight_function)
-            
+
             name = 'Benin Republic'
             surface_area = round(sum(ben_yield['2020 estimated surface (ha)'].dropna())*100,2)
             total_yield = round(sum(ben_yield['2020 total yield (kg)'].dropna()),2)
@@ -404,7 +420,7 @@ class my_home():
             out_prod_tree = int(sum(ben_yield['Number of trees out of production'].dropna()))
             dead_tree = int(sum(ben_yield['Number of dead trees'].dropna()))
             tree_ha_pred = round(sum(dtstats_df[dtstats_df['Country']=='Benin'].Cashew_Yield)/10000,2)
-            
+
             html4 = '''
                     <html>
                         <head>
@@ -474,8 +490,8 @@ class my_home():
 
                                 var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
                                 chart.draw(data, options);
-                                
-                                
+
+
                                 var data_donut = google.visualization.arrayToDataTable([
                                 ['Tree Type', 'Number of Trees'],
                                 ['Active Trees',      {14}],
@@ -553,19 +569,19 @@ class my_home():
                         </body>
                         </html>'''.format(name, pred_ben_data, pred_ground_ben_data, total_yield, tree_ha_pred, surface_area, abs(round(surface_area - tree_ha_pred,2)), '6th',
                             yield_ha, yield_tree, num_tree, sick_tree, out_prod_tree, dead_tree, num_tree- sick_tree- out_prod_tree- dead_tree)
-                
-            
+
+
 
             iframe = folium.IFrame(html=html4, width=450, height=380)
 
             folium.Popup(iframe, max_width=2000).add_to(temp_layer0)
 
             # consolidate individual features back into the main layer
-            
+
 
 
         # m.add_child(json_layer_ben)
-            
+
             temp_layer0.add_to(layer0)
 
         layer0.add_to(m)
@@ -581,26 +597,26 @@ class my_home():
         for feature in temp_geojson.data['features']:
             # GEOJSON layer consisting of a single feature
             name = feature["properties"]["NAME_1"]
-            
+
             y1 = dtstats_df[dtstats_df['Districts']==name]['Communes']
 
             # getting values against each value of y
-            
+
             x1 = dtstats_df[dtstats_df['Districts']==name]['Cashew_Yield']/10000
-            
+
             z1 = zip(y1,x1)
-            
+
             c_y1 = dtstats_df1[dtstats_df1['Country']=='Benin']['Districts']
             z_list = []
             for c_y in c_y1:
                 c_x = round(sum(ben_yield[ben_yield['Departement']==c_y]['2020 total yield (kg)'].dropna()),2)
                 z_list.append((c_y, c_x))
-            
+
             sorted_by_second = sorted(z_list, reverse = True, key=lambda tup: tup[1])
             list1, _ = zip(*sorted_by_second)
             position = list1.index(name)
             my_dict = {'0': "highest", '1': "2nd", '2': "3rd", '3': "4th", '4': "5th", '5': "6th", '6': "7th", '7': "8th", '8': "9th", '9': "10th", '10': "11th", '11':"lowest"}
-            
+
             pred_dept_data = []
             pred_ground_dept_data = [['Communes', 'Satellite Prediction', 'Ground Data Estimate']]
             for (y,x) in z1:
@@ -609,7 +625,7 @@ class my_home():
                 pred_ground_dept_data.append([y, x, x_new*100])
 
             temp_layer1 = folium.GeoJson(feature, zoom_on_click = True, highlight_function = highlight_function)
-            
+
             tree_ha_pred_dept = round(sum(dtstats_df[dtstats_df['Districts']==name].Cashew_Yield)/10000,2)
             surface_areaD = round(sum(ben_yield[ben_yield['Departement']==name]['2020 estimated surface (ha)'].dropna())*100,2)
             total_yieldD = round(sum(ben_yield[ben_yield['Departement']==name]['2020 total yield (kg)'].dropna()),2)
@@ -619,7 +635,7 @@ class my_home():
             sick_treeD = int(sum(ben_yield[ben_yield['Departement']==name]['Number of sick trees'].dropna()))
             out_prod_treeD = int(sum(ben_yield[ben_yield['Departement']==name]['Number of trees out of production'].dropna()))
             dead_treeD = int(sum(ben_yield[ben_yield['Departement']==name]['Number of dead trees'].dropna()))
-            
+
 
             html3 = '''
                     <html>
@@ -692,7 +708,7 @@ class my_home():
 
                                 var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
                                 chart.draw(data, options);
-                                
+
                                 var data_donut = google.visualization.arrayToDataTable([
                                 ['Tree Type', 'Number of Trees'],
                                 ['Active Trees',      {14}],
@@ -709,7 +725,7 @@ class my_home():
 
                                 var chart_donut = new google.visualization.PieChart(document.getElementById('donutchart'));
                                 chart_donut.draw(data_donut, options_donut);
-                                
+
                                 }};
                             </script>
                         </head>
@@ -776,7 +792,7 @@ class my_home():
             folium.Popup(iframe, max_width=2000).add_to(temp_layer1)
 
             # consolidate individual features back into the main layer
-            
+
 
 
             folium.GeoJsonTooltip(fields=["NAME_1"],
@@ -785,7 +801,7 @@ class my_home():
                 sticky = False,
                 style=("background-color: white; color: black; font-family: sans-serif; font-size: 12px; padding: 4px;")
                 ).add_to(temp_layer1)
-            
+
             temp_layer1.add_to(layer)
 
         layer.add_to(m)
@@ -803,14 +819,14 @@ class my_home():
         for feature in temp_geojson2.data['features']:
             # GEOJSON layer consisting of a single feature
             name = feature["properties"]["NAME_2"]
-            
+
             c_y2 = dtstats_df['Communes']
-            
+
             z_list_2 = []
             for c_y in c_y2:
                 c_x = round(sum(ben_yield[ben_yield['Commune']==c_y]['2020 estimated surface (ha)'].dropna())*100,2)
                 z_list_2.append((c_y, c_x))
-            
+
             sorted_by_second2 = sorted(z_list_2, reverse = True, key=lambda tup: tup[1])
             list2, _ = zip(*sorted_by_second2)
             position2 = list2.index(name)          
@@ -892,7 +908,7 @@ class my_home():
                     '76': 'lowest'}
 
             temp_layer2 = folium.GeoJson(feature,  zoom_on_click = True, highlight_function = highlight_function)
-            
+
             name = feature['properties']['NAME_2']
             tree_ha_pred_comm = round(sum(dtstats_df[dtstats_df['Communes']==name].Cashew_Yield)/10000,2)
             surface_areaC = round(sum(ben_yield[ben_yield['Commune']==name]['2020 estimated surface (ha)'].dropna())*100,2)
@@ -903,7 +919,7 @@ class my_home():
             sick_treeC = int(sum(ben_yield[ben_yield['Commune']==name]['Number of sick trees'].dropna()))
             out_prod_treeC = int(sum(ben_yield[ben_yield['Commune']==name]['Number of trees out of production'].dropna()))
             dead_treeC = int(sum(ben_yield[ben_yield['Commune']==name]['Number of dead trees'].dropna()))
-            
+
 
             html3 = '''
                     <html>
@@ -944,7 +960,7 @@ class my_home():
                             google.charts.setOnLoadCallback(drawChart);
 
                             function drawChart() {{
-                                
+
                                 var data_donut = google.visualization.arrayToDataTable([
                                 ['Tree Type', 'Number of Trees'],
                                 ['Active Trees',      {12}],
@@ -961,12 +977,12 @@ class my_home():
 
                                 var chart_donut = new google.visualization.PieChart(document.getElementById('donutchart'));
                                 chart_donut.draw(data_donut, options_donut);
-                                
+
                                 }};
                             </script>
                         </head>
                         <body>
-                        
+
                             <h2>{0}</h2>
                             <h4>In 2020, {0} was ranked <b>{5}</b> among Benin communes in terms of total cashew yield according to the TNS Yield Survey.</h4>
                             <table>
@@ -1023,7 +1039,7 @@ class my_home():
             folium.Popup(iframe, max_width=2000).add_to(temp_layer2)
 
             # consolidate individual features back into the main layer
-            
+
 
 
         # m.add_child(json_layer_ben)
@@ -1034,12 +1050,13 @@ class my_home():
                 sticky = False,
                 style=("background-color: white; color: black; font-family: sans-serif; font-size: 12px; padding: 4px;")
                 ).add_to(temp_layer2)
-            
+
             temp_layer2.add_to(layer2)
 
         layer2.add_to(m)
 
         m.add_child(folium.LayerControl())
+
 
 
         m=m._repr_html_()
