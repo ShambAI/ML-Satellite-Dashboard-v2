@@ -425,7 +425,11 @@ def profile(request):
     rem_org = RemOrganization.objects.filter(id = rem_user.values()[0]['organization_id'])
 
     context = rem_user.values()[0]
-    context['organization_name'] = rem_org.values()[0]['organization_name']
+
+    try:
+        context['organization_name'] = rem_org.values()[0]['organization_name']
+    except:
+        context['organization_name'] = ''
     return render(request, 'profile.html', context)
 
 # @login_required(login_url="/login/")
