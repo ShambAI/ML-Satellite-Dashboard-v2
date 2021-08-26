@@ -179,6 +179,10 @@ class SignUpForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError({"email": "Email exists"})
 
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise ValidationError({"username": "Username exists"})
+
         password = self.cleaned_data.get('password1')
         password1 = self.cleaned_data.get('password2')
         if password != password1:
