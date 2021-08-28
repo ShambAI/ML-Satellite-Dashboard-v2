@@ -1,5 +1,5 @@
-makeprivatekey.json
-# Data
+privatekey.json
+Data
 
 # byte-compiled / optimized / DLL files
 __pycache__/
