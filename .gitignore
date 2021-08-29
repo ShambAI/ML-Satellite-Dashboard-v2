@@ -1,5 +1,5 @@
-privatekey.json
-Data
+# privatekey.json
+# Data
 
 # byte-compiled / optimized / DLL files
 __pycache__/
@@ -20,7 +20,7 @@ heroku_script.sh
 # venv
 env
 venv
-.env
+# .env
 
 # other
 .DS_Store
