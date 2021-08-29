@@ -105,5 +105,5 @@ whitenoise==5.3.0
 xlrd==2.0.1
 zipp==3.4.1
 Shapely
-python-doten==0.19.0
+python-dotenv==0.19.0
 # zope.interface==4.3.2
