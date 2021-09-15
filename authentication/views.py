@@ -83,7 +83,7 @@ def forgot_password(request):
             user = User.objects.get(email=email)
 
             current_site = get_current_site(request)
-            mail_subject = 'Reset your password.'
+            mail_subject = 'Reset your Password'
             message = loader.get_template('accounts/password_reset_email.html').render(
                 {
                     'user': user,
@@ -101,16 +101,17 @@ def forgot_password(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
                 mail_subject, 
-                message, 
+                message,
+                from_email= '"Caju-Lab Support" <cajusupport@tnslabs.org>',
                 to=[to_email]
             )
             email.content_subtype = "html"
 
             email.send()
 
-            msg     = "We've emailed you instructions for setting your password, \
-                        if an account exists with the email you entered. You should receive them shortly.\
-                        If you don't receive an email, please make sure you've entered the address you registered with, \
+            msg     = "We've emailed you instructions for setting your password. \
+                        If an account exists with the email you have entered, you should receive them shortly.\
+                        If you don't receive an email, please make sure you've entered the address you registered with correctly, \
                         and check your spam folder."
             success = True
             # return HttpResponse('Please confirm your email address to complete the registration')
@@ -215,6 +216,7 @@ def register_user(request):
             email = EmailMessage(
                 mail_subject, 
                 message, 
+                from_email = '"Caju-Lab Support" <cajusupport@tnslabs.org>',
                 to=[to_email]
             )
             email.content_subtype = "html"

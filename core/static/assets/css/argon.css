@@ -218,7 +218,7 @@ a
 {
     text-decoration: none;
 
-    color: #5e72e4;
+    color: #fcfdff;
     background-color: transparent;
 }
 a:hover
@@ -8769,7 +8769,7 @@ a.close.disabled
 
 .bg-primary
 {
-    background-color: #5e72e4 !important;
+    background-color: #0f1224 !important;
 }
 
 a.bg-primary:hover,
@@ -8782,7 +8782,7 @@ button.bg-primary:focus
 
 .bg-secondary
 {
-    background-color: #f7fafc !important;
+    background-color: #fff !important;
 }
 
 a.bg-secondary:hover,
@@ -24153,7 +24153,7 @@ button.bg-lighter:focus
 
 .bg-gradient-primary
 {
-    background: linear-gradient(87deg, #5e72e4 0, #825ee4 100%) !important;
+    background: linear-gradient(87deg, #fff 0, #fff 100%) !important;
 }
 
 .bg-gradient-secondary
@@ -24509,7 +24509,7 @@ button.section-darker:focus
 
 .bg-gradient-primary
 {
-    background: linear-gradient(87deg, #5e72e4 0, #825ee4 100%) !important;
+    background: linear-gradient(87deg, #fff 0, #fff 100%) !important;
 }
 
 .bg-gradient-secondary

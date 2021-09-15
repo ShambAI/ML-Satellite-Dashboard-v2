@@ -139,7 +139,9 @@ class my_home():
         benin_adm2 = ee.FeatureCollection("users/ashamba/BEN_adm2")
 
         alldept = ee.Image('users/ashamba/allDepartments_v0')
-        RGB = ee.Image('users/ashamba/RGB')
+        RGB_list = []
+        for i in range(1,41):
+            RGB_list.append(ee.Image(f'users/ashamba/RGB_{i}'))
 
         ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1,engine='openpyxl',)
         ben_yield = ben_yield.interpolate()
@@ -273,7 +275,7 @@ class my_home():
 
         plantation_cluster = MarkerCluster(name="Benin Plantations").add_to(m)
 
-        for i in range(1,13):
+        for i in range(1,53):
             with open(f"geojson_data/{i}.geojson") as f:
                 plantation_json = geojson.load(f)
 
@@ -355,8 +357,8 @@ class my_home():
             feature_group.add_to(m)
             
         feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
-        for i in range(1,3):
-            with open(f"drone{i}/Tree Crowns.geojson") as f:
+        for i in range(1,41):
+            with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
                 crown_json = geojson.load(f)
             crown_geojson  = folium.GeoJson(data=crown_json,
                                             name='Tree Tops',
@@ -375,12 +377,20 @@ class my_home():
                 control=True
             ).add_to(self)
 
-        folium.Map.add_ee_layer = add_ee_layer   
+        folium.Map.add_ee_layer = add_ee_layer
+        folium.map.FeatureGroup.add_ee_layer = add_ee_layer
 
         zones = alldept.eq(1)
         zones = zones.updateMask(zones.neq(0));
 
         m.add_ee_layer(zones, {'palette': "red"}, 'Satellite Prediction')
+
+        Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
+
+        for rgb in RGB_list:
+            Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
+        Drone_Images.add_to(m)
+
 
 
 
@@ -615,7 +625,9 @@ class my_home():
 
             sorted_by_second = sorted(z_list, reverse = True, key=lambda tup: tup[1])
             list1, _ = zip(*sorted_by_second)
-            position = list1.index(name)
+            # position = list1.index(name)
+
+            position = 1
             my_dict = {'0': "highest", '1': "2nd", '2': "3rd", '3': "4th", '4': "5th", '5': "6th", '6': "7th", '7': "8th", '8': "9th", '9': "10th", '10': "11th", '11':"lowest"}
 
             pred_dept_data = []
@@ -830,7 +842,9 @@ class my_home():
 
             sorted_by_second2 = sorted(z_list_2, reverse = True, key=lambda tup: tup[1])
             list2, _ = zip(*sorted_by_second2)
-            position2 = list2.index(name)          
+            # position2 = list2.index(name)          
+            
+            position2 = 1          
             my_dict_communes = {'1': 'highest',
                     '2': '2nd',
                     '3': '3rd',
