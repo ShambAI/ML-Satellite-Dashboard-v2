@@ -356,15 +356,17 @@ class my_home():
             feature_group.add_child(img2)
             feature_group.add_to(m)
             
-        feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
-        for i in range(1,25):
-            with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
-                crown_json = geojson.load(f)
-            crown_geojson  = folium.GeoJson(data=crown_json,
-                                            name='Tree Tops',
-                                            zoom_on_click = True)
-            feature_group2.add_child(crown_geojson)
-        feature_group2.add_to(m)
+        # feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
+        # for i in range(1,25):
+        # with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
+        with open(f"geojson_tree/mergedfile.geojson") as f:
+            crown_json = geojson.load(f)
+        crown_geojson  = folium.GeoJson(data=crown_json,
+                                        name='Tree Tops',
+                                        zoom_on_click = True)
+        m.add_child(crown_geojson)
+        # feature_group2.add_child(crown_geojson)
+        # feature_group2.add_to(m)
             
 
         def add_ee_layer(self, ee_image_object, vis_params, name):
