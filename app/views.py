@@ -387,9 +387,9 @@ class my_home():
 
         Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
 
-        # for rgb in RGB_list:
-        #     Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
-        # Drone_Images.add_to(m)
+        for rgb in RGB_list:
+            Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
+        Drone_Images.add_to(m)
 
 
 
