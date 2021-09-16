@@ -356,15 +356,15 @@ class my_home():
             feature_group.add_child(img2)
             feature_group.add_to(m)
             
-        # feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
-        # for i in range(1,41):
-        #     with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
-        #         crown_json = geojson.load(f)
-        #     crown_geojson  = folium.GeoJson(data=crown_json,
-        #                                     name='Tree Tops',
-        #                                     zoom_on_click = True)
-        #     feature_group2.add_child(crown_geojson)
-        # feature_group2.add_to(m)
+        feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
+        for i in range(1,41):
+            with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
+                crown_json = geojson.load(f)
+            crown_geojson  = folium.GeoJson(data=crown_json,
+                                            name='Tree Tops',
+                                            zoom_on_click = True)
+            feature_group2.add_child(crown_geojson)
+        feature_group2.add_to(m)
             
 
         def add_ee_layer(self, ee_image_object, vis_params, name):
@@ -385,14 +385,14 @@ class my_home():
 
         m.add_ee_layer(zones, {'palette': "red"}, 'Satellite Prediction')
 
-        Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
+        # Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
 
-        count = 0
-        for rgb in RGB_list:
-            if count <= 20:
-                Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
-            count += 1
-        Drone_Images.add_to(m)
+        # count = 0
+        # for rgb in RGB_list:
+        #     if count <= 20:
+        #         Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
+        #     count += 1
+        # Drone_Images.add_to(m)
 
 
 
