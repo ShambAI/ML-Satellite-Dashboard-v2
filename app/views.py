@@ -357,7 +357,7 @@ class my_home():
             feature_group.add_to(m)
             
         feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
-        for i in range(1,38):
+        for i in range(11,41):
             with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
                 crown_json = geojson.load(f)
             crown_geojson  = folium.GeoJson(data=crown_json,
