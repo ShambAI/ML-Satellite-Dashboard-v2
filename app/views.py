@@ -357,7 +357,7 @@ class my_home():
             feature_group.add_to(m)
             
         feature_group2 = folium.map.FeatureGroup(name='Tree Tops')    
-        for i in range(1,30):
+        for i in range(1,20):
             with open(f"geojson_tree/Tree Crowns ({i}).geojson") as f:
                 crown_json = geojson.load(f)
             crown_geojson  = folium.GeoJson(data=crown_json,
@@ -389,7 +389,7 @@ class my_home():
 
         count = 0
         for rgb in RGB_list:
-            if count <= 10:
+            if count <= 3:
                 Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
             count += 1
         Drone_Images.add_to(m)
