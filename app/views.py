@@ -385,14 +385,14 @@ class my_home():
 
         m.add_ee_layer(zones, {'palette': "red"}, 'Satellite Prediction')
 
-        # Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
+        Drone_Images = folium.map.FeatureGroup(name='Drone Images') 
 
-        # count = 0
-        # for rgb in RGB_list:
-        #     if count <= 20:
-        #         Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
-        #     count += 1
-        # Drone_Images.add_to(m)
+        count = 0
+        for rgb in RGB_list:
+            if count <= 10:
+                Drone_Images.add_ee_layer(rgb, {}, 'DRONE')
+            count += 1
+        Drone_Images.add_to(m)
 
 
 
