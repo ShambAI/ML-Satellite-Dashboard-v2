@@ -275,31 +275,31 @@ class my_home():
 
         plantation_cluster = MarkerCluster(name="Benin Plantations").add_to(m)
 
-        # for i in range(1,53):
-        #     with open(f"geojson_data/{i}.geojson") as f:
-        #         plantation_json = geojson.load(f)
+        for i in range(1,53):
+            with open(f"geojson_data/{i}.geojson") as f:
+                plantation_json = geojson.load(f)
 
-        #     plant_geojson  = folium.GeoJson(data=plantation_json,
-        #                                     name='Benin-Adm0 Department',
-        #                                     zoom_on_click = True)
-        # #                                     highlight_function = highlight_function)
-        #     plant_geojson.add_to(plantation_cluster)
+            plant_geojson  = folium.GeoJson(data=plantation_json,
+                                            name='Benin-Adm0 Department',
+                                            zoom_on_click = True)
+        #                                     highlight_function = highlight_function)
+            plant_geojson.add_to(plantation_cluster)
 
-        #     features = plantation_json["features"][0]
-        #     s = shape(features["geometry"])
-        #     centre = s.centroid
-        #     folium.Marker(location= [centre.y, centre.x],
-        #                 rise_on_hover=True,
-        #                 rise_offset = 250,
-        #                 icon = folium.Icon(color="lightblue", icon="info-sign"),
-        #                 popup='''
-        #                 <div style="border: 3px solid #808080">
-        #                 <img src="https://i0.wp.com/cdn.vanguardngr.com/wp-content/uploads/2015/07/Cashew-fruit.jpg?resize=350%2C200&ssl=1" width="150" height="100">
-        #                 <h5>Plantation Owner: <b>Boniface</b></h5>
-        #                 <h5>Plantation Area (ha): <b>Unknown</b></h5>
-        #                 <h5>Number of Trees: <b>Unknown</b></h5>
-        #                 <a href="https://www.technoserve.org/our-work/agriculture/cashew/?_ga=2.159985149.1109250972.1626437600-1387218312.1616379774"target="_blank">click link to website</a>
-        #                 </div>''').add_to(plantation_cluster)
+            features = plantation_json["features"][0]
+            s = shape(features["geometry"])
+            centre = s.centroid
+            folium.Marker(location= [centre.y, centre.x],
+                        rise_on_hover=True,
+                        rise_offset = 250,
+                        icon = folium.Icon(color="lightblue", icon="info-sign"),
+                        popup='''
+                        <div style="border: 3px solid #808080">
+                        <img src="https://i0.wp.com/cdn.vanguardngr.com/wp-content/uploads/2015/07/Cashew-fruit.jpg?resize=350%2C200&ssl=1" width="150" height="100">
+                        <h5>Plantation Owner: <b>Boniface</b></h5>
+                        <h5>Plantation Area (ha): <b>Unknown</b></h5>
+                        <h5>Number of Trees: <b>Unknown</b></h5>
+                        <a href="https://www.technoserve.org/our-work/agriculture/cashew/?_ga=2.159985149.1109250972.1626437600-1387218312.1616379774"target="_blank">click link to website</a>
+                        </div>''').add_to(plantation_cluster)
 
         marker_cluster = MarkerCluster(name="Nursery Information").add_to(m)
 
@@ -625,9 +625,9 @@ class my_home():
 
             sorted_by_second = sorted(z_list, reverse = True, key=lambda tup: tup[1])
             list1, _ = zip(*sorted_by_second)
-            # position = list1.index(name)
+            position = list1.index(name)
 
-            position = 1
+            # position = 1
             my_dict = {'0': "highest", '1': "2nd", '2': "3rd", '3': "4th", '4': "5th", '5': "6th", '6': "7th", '7': "8th", '8': "9th", '9': "10th", '10': "11th", '11':"lowest"}
 
             pred_dept_data = []
@@ -842,9 +842,9 @@ class my_home():
 
             sorted_by_second2 = sorted(z_list_2, reverse = True, key=lambda tup: tup[1])
             list2, _ = zip(*sorted_by_second2)
-            # position2 = list2.index(name)          
+            position2 = list2.index(name)          
             
-            position2 = 1          
+            # position2 = 1          
             my_dict_communes = {'1': 'highest',
                     '2': '2nd',
                     '3': '3rd',
