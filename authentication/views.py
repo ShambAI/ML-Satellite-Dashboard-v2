@@ -523,3 +523,25 @@ def nurseries(request):
     context['segment'] = 'nurseries'
     context['page_range'] = page_range
     return render(request, 'nurseries.html', context)
+
+@login_required(login_url="/login/")
+def shipment(request):
+    context = {}
+    nurseries_list = models.Nursery.objects.filter(status = utils.Status.ACTIVE)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(nurseries_list, 10)
+    
+    page_range = paginator.get_elided_page_range(number=page)
+    try:
+        nurseries = paginator.page(page)
+    except PageNotAnInteger:
+        nurseries = paginator.page(1)
+    except EmptyPage:
+        nurseries = paginator.page(paginator.num_pages)
+
+    context['nurseries'] = nurseries
+    context['segment'] = 'nurseries'
+    context['page_range'] = page_range
+    return render(request, 'shipment.html', context)

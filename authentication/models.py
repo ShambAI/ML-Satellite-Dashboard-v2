@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 """
-Copyright (c) 2020 - Technoserve X Damilola
+Copyright (c) 2020 - Technoserve
 """
 
 from django.db import models

@@ -1,7 +1,0 @@
-{
-"type": "FeatureCollection",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "Plantation code": "07-01-51-15-ISS-SEI-01", "Commune": "BASSILA", "Arrondissement or Village": "Bassila" }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 1.615748, 9.136592 ], [ 1.615761, 9.13659 ], [ 1.615795, 9.13688 ], [ 1.615813, 9.13703 ], [ 1.616058, 9.137011 ], [ 1.616218, 9.136981 ], [ 1.616381, 9.136941 ], [ 1.616358, 9.136861 ], [ 1.616309, 9.136761 ], [ 1.616265, 9.136599 ], [ 1.616272, 9.136564 ], [ 1.616233, 9.136525 ], [ 1.61598, 9.136553 ], [ 1.615808, 9.136577 ], [ 1.615748, 9.136592 ] ] ] ] } }
-]
-}
