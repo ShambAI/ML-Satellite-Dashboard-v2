@@ -792,10 +792,10 @@ class my_home():
                 z_list_2.append((c_y, c_x))
 
             sorted_by_second2 = sorted(z_list_2, reverse = True, key=lambda tup: tup[1])
-            # list2, _ = zip(*sorted_by_second2)
+            list2, _ = zip(*sorted_by_second2)
             position2 = list2.index(name)          
 
-            position2 = 1          
+            # position2 = 1          
             my_dict_communes = {'1': 'highest',
                     '2': '2nd',
                     '3': '3rd',
