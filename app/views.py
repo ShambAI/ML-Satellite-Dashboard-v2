@@ -121,173 +121,7 @@ ee.Initialize(credentials)
 
 #     def highlight_function(feature):
 #         return {"fillColor": "#ffaf00", "color": "green", "weight": 3, "dashArray": "1, 1"}
-benin_adm0 = ee.FeatureCollection("users/ashamba/BEN_adm0")
-benin_adm1 = ee.FeatureCollection("users/ashamba/BEN_adm1")
-benin_adm2 = ee.FeatureCollection("users/ashamba/BEN_adm2")
-alldept = ee.Image('users/ashamba/allDepartments_v0')
 
-ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1,engine='openpyxl',sheet_name = 'YIELD + BPA_2020')
-ben_yield = ben_yield.interpolate()
-ben_yield['Departement'] = ben_yield['Departement'].str.title()
-ben_yield['Commune'] = ben_yield['Commune'].str.title()
-ben_yield['Arrondissement'] = ben_yield['Arrondissement'].str.title()
-ben_yield['Village'] = ben_yield['Village'].str.title()
-ben_yield['Surname'] = ben_yield['Surname'].str.title()
-ben_yield['Given Name'] = ben_yield['Given Name'].str.title()
-ben_yield.loc[(ben_yield.Commune == 'Bante'), 'Commune'] = 'Bantè'
-ben_yield.loc[(ben_yield.Commune == 'Dassa'), 'Commune'] = 'Dassa-Zoumè'
-ben_yield.loc[(ben_yield.Commune == 'Save'), 'Commune'] = 'Savè'
-ben_yield.loc[(ben_yield.Commune == 'Glazoue'), 'Commune'] = 'Glazoué'
-ben_yield.loc[(ben_yield.Commune == 'Ndali'), 'Commune'] = "N'Dali"
-ben_yield.loc[(ben_yield.Commune == 'Ouesse'), 'Commune'] = 'Ouèssè'
-
-ben_yield_GEO = pd.read_excel("./Data/Yield data_GEO_master.xlsx",engine='openpyxl', sheet_name = 'Drone mapping')
-ben_yield['Code'] = ben_yield['Code'].str.upper()
-ben_yield_GEO['Code'] = ben_yield_GEO['Code'].str.upper()
-
-
-
-ben_nursery = pd.read_excel("./Data/Nurseries.xlsx",engine='openpyxl',)
-
-ben_nursery['Commune'] = ben_nursery['Commune'].str.title()
-ben_nursery['Owner'] = ben_nursery['Owner'].str.title()
-
-#Drop nan columns
-ben_nursery.drop(["Date","Provenance","Regarnissage", "Altitude", "Partenaire"], axis = 1, inplace = True)
-ben_nursery.dropna(inplace=True)
-
-
-
-
-with open("Data/CajuLab_Plantations.geojson", errors="ignore") as f:
-        alteia_json = geojson.load(f)
-
-with open("ben_adm0.json", errors="ignore") as f:
-    benin_adm0_json = geojson.load(f)
-
-with open("ben_adm1.json", errors="ignore") as f:
-    benin_adm1_json = geojson.load(f)
-
-with open("ben_adm2.json", errors="ignore") as f:
-    benin_adm2_json = geojson.load(f)
-    
-
-#The alteia platform plantation statistics    
-    
-alteia_stats = alldept.eq(1).reduceRegions(
-                                collection = alteia_json,
-                                reducer = ee.Reducer.sum(),
-                                scale = 1
-                                )
-
-alteia_stats = alteia_stats.select(['Plantation code', 'sum'], ['Code','Cashew_Tree'], retainGeometry=True).getInfo()
-
-alteia_df = pd.DataFrame()
-for alt in alteia_stats['features']:
-    df_a = pd.DataFrame([alt['properties']], columns=alt['properties'].keys())
-    alteia_df = pd.concat([alteia_df, df_a], axis=0)
-
-# Reorder columns in dataframe, sort by state name and reset index
-alteia_df = alteia_df[['Code','Cashew_Tree']]
-alteia_df = alteia_df.sort_values(by=['Code']).reset_index(drop=True)
-
-
-dist_stats1 = alldept.eq(1).reduceRegions(
-                                collection = benin_adm1,
-                                reducer = ee.Reducer.sum(),
-                                scale = 30
-                                )
-dist_stats1 = dist_stats1.select(['NAME_0','NAME_1', 'sum'], ['Country', 'Districts','Cashew_Yield'], retainGeometry=True).getInfo()
-
-dtstats_df1 = pd.DataFrame()
-for dist1 in dist_stats1['features']:
-    df1 = pd.DataFrame([dist1['properties']], columns=dist1['properties'].keys())
-    dtstats_df1 = pd.concat([dtstats_df1, df1], axis=0)
-
-# Reorder columns in dataframe, sort by state name and reset index
-dtstats_df1 = dtstats_df1[['Country', 'Districts', 'Cashew_Yield']]
-dtstats_df1 = dtstats_df1.sort_values(by=['Districts']).reset_index(drop=True)
-
-# change state names from upper case to title case!!
-dtstats_df1['Districts'] = dtstats_df1['Districts'].str.title()
-
-dist_stats = alldept.eq(1).multiply(ee.Image.pixelArea()).reduceRegions(
-                                    collection = benin_adm2,
-                                    reducer = ee.Reducer.sum(),
-                                    scale = 30,
-                                    )
-dist_stats = dist_stats.select(['NAME_0','NAME_1', 'NAME_2', 'sum'], ['Country', 'Districts', 'Communes','Cashew_Yield'], retainGeometry=True).getInfo()
-
-dtstats_df = pd.DataFrame()
-for dist in dist_stats['features']:
-    df = pd.DataFrame([dist['properties']], columns=dist['properties'].keys())
-    dtstats_df = pd.concat([dtstats_df, df], axis=0)
-
-# Reorder columns in dataframe, sort by state name and reset index
-dtstats_df = dtstats_df[['Country', 'Districts', 'Communes', 'Cashew_Yield']]
-dtstats_df = dtstats_df.sort_values(by=['Districts']).reset_index(drop=True)
-
-# change state names from upper case to title case!!
-dtstats_df['Districts'] = dtstats_df['Districts'].str.title()
-
-
-list_global = []
-for item in list(ben_yield_GEO['Code']):
-    if item in list(ben_yield['Code']):
-        list_global.append(item)
-        
-GEO_id_tuple = []
-for unique_id in list_global:
-    GEO_id_tuple.append((list(ben_yield_GEO[ben_yield_GEO['Code']==unique_id]['Local shape ID or coordinates'])[0], unique_id))
-    
-special_id_tuple = []
-special_id = []
-for (id_u, code_u) in GEO_id_tuple:
-    if id_u in list(alteia_df['Code']):
-        special_id_tuple.append((id_u, code_u))
-        special_id.append(id_u)
-
-
-basemaps = {
-            'Google Maps': folium.TileLayer(
-                tiles = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                attr = 'Google',
-                name = 'Maps',
-                max_zoom =18,
-                overlay = True,
-                control = False
-            ),
-            'Google Satellite': folium.TileLayer(
-                tiles = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-                attr = 'Google',
-                name = 'Satellite View',
-                max_zoom = 18,
-                overlay = True,
-                show=False,
-                control = True
-            ),
-            'Google Terrain': folium.TileLayer(
-                tiles = 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-                attr = 'Google',
-                name = 'Google Terrain',
-                overlay = True,
-                control = True
-            ),
-            'Google Satellite Hybrid': folium.TileLayer(
-                tiles = 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-                attr = 'Google',
-                name = 'Google Satellite',
-                overlay = True,
-                control = True
-            ),
-            'Esri Satellite': folium.TileLayer(
-                tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                attr = 'Esri',
-                name = 'Esri Satellite',
-                overlay = True,
-                control = True
-            )
-        }
 
 
 
@@ -303,6 +137,175 @@ class my_home():
     def get_context_data(self, **kwargs):
 
                 # figure = folium.Figure()
+
+
+        benin_adm0 = ee.FeatureCollection("users/ashamba/BEN_adm0")
+        benin_adm1 = ee.FeatureCollection("users/ashamba/BEN_adm1")
+        benin_adm2 = ee.FeatureCollection("users/ashamba/BEN_adm2")
+        alldept = ee.Image('users/ashamba/allDepartments_v0')
+
+        ben_yield = pd.read_excel("./Data/Yield data_YEARS_master.xlsx", skiprows=1,engine='openpyxl',sheet_name = 'YIELD + BPA_2020')
+        ben_yield = ben_yield.interpolate()
+        ben_yield['Departement'] = ben_yield['Departement'].str.title()
+        ben_yield['Commune'] = ben_yield['Commune'].str.title()
+        ben_yield['Arrondissement'] = ben_yield['Arrondissement'].str.title()
+        ben_yield['Village'] = ben_yield['Village'].str.title()
+        ben_yield['Surname'] = ben_yield['Surname'].str.title()
+        ben_yield['Given Name'] = ben_yield['Given Name'].str.title()
+        ben_yield.loc[(ben_yield.Commune == 'Bante'), 'Commune'] = 'Bantè'
+        ben_yield.loc[(ben_yield.Commune == 'Dassa'), 'Commune'] = 'Dassa-Zoumè'
+        ben_yield.loc[(ben_yield.Commune == 'Save'), 'Commune'] = 'Savè'
+        ben_yield.loc[(ben_yield.Commune == 'Glazoue'), 'Commune'] = 'Glazoué'
+        ben_yield.loc[(ben_yield.Commune == 'Ndali'), 'Commune'] = "N'Dali"
+        ben_yield.loc[(ben_yield.Commune == 'Ouesse'), 'Commune'] = 'Ouèssè'
+
+        ben_yield_GEO = pd.read_excel("./Data/Yield data_GEO_master.xlsx",engine='openpyxl', sheet_name = 'Drone mapping')
+        ben_yield['Code'] = ben_yield['Code'].str.upper()
+        ben_yield_GEO['Code'] = ben_yield_GEO['Code'].str.upper()
+
+
+
+        ben_nursery = pd.read_excel("./Data/Nurseries.xlsx",engine='openpyxl',)
+
+        ben_nursery['Commune'] = ben_nursery['Commune'].str.title()
+        ben_nursery['Owner'] = ben_nursery['Owner'].str.title()
+
+        #Drop nan columns
+        ben_nursery.drop(["Date","Provenance","Regarnissage", "Altitude", "Partenaire"], axis = 1, inplace = True)
+        ben_nursery.dropna(inplace=True)
+
+
+
+
+        with open("Data/CajuLab_Plantations.geojson", errors="ignore") as f:
+                alteia_json = geojson.load(f)
+
+        with open("ben_adm0.json", errors="ignore") as f:
+            benin_adm0_json = geojson.load(f)
+
+        with open("ben_adm1.json", errors="ignore") as f:
+            benin_adm1_json = geojson.load(f)
+
+        with open("ben_adm2.json", errors="ignore") as f:
+            benin_adm2_json = geojson.load(f)
+            
+
+        #The alteia platform plantation statistics    
+            
+        alteia_stats = alldept.eq(1).reduceRegions(
+                                        collection = alteia_json,
+                                        reducer = ee.Reducer.sum(),
+                                        scale = 1
+                                        )
+
+        alteia_stats = alteia_stats.select(['Plantation code', 'sum'], ['Code','Cashew_Tree'], retainGeometry=True).getInfo()
+
+        alteia_df = pd.DataFrame()
+        for alt in alteia_stats['features']:
+            df_a = pd.DataFrame([alt['properties']], columns=alt['properties'].keys())
+            alteia_df = pd.concat([alteia_df, df_a], axis=0)
+
+        # Reorder columns in dataframe, sort by state name and reset index
+        alteia_df = alteia_df[['Code','Cashew_Tree']]
+        alteia_df = alteia_df.sort_values(by=['Code']).reset_index(drop=True)
+
+
+        dist_stats1 = alldept.eq(1).reduceRegions(
+                                        collection = benin_adm1,
+                                        reducer = ee.Reducer.sum(),
+                                        scale = 30
+                                        )
+        dist_stats1 = dist_stats1.select(['NAME_0','NAME_1', 'sum'], ['Country', 'Districts','Cashew_Yield'], retainGeometry=True).getInfo()
+
+        dtstats_df1 = pd.DataFrame()
+        for dist1 in dist_stats1['features']:
+            df1 = pd.DataFrame([dist1['properties']], columns=dist1['properties'].keys())
+            dtstats_df1 = pd.concat([dtstats_df1, df1], axis=0)
+
+        # Reorder columns in dataframe, sort by state name and reset index
+        dtstats_df1 = dtstats_df1[['Country', 'Districts', 'Cashew_Yield']]
+        dtstats_df1 = dtstats_df1.sort_values(by=['Districts']).reset_index(drop=True)
+
+        # change state names from upper case to title case!!
+        dtstats_df1['Districts'] = dtstats_df1['Districts'].str.title()
+
+        dist_stats = alldept.eq(1).multiply(ee.Image.pixelArea()).reduceRegions(
+                                            collection = benin_adm2,
+                                            reducer = ee.Reducer.sum(),
+                                            scale = 30,
+                                            )
+        dist_stats = dist_stats.select(['NAME_0','NAME_1', 'NAME_2', 'sum'], ['Country', 'Districts', 'Communes','Cashew_Yield'], retainGeometry=True).getInfo()
+
+        dtstats_df = pd.DataFrame()
+        for dist in dist_stats['features']:
+            df = pd.DataFrame([dist['properties']], columns=dist['properties'].keys())
+            dtstats_df = pd.concat([dtstats_df, df], axis=0)
+
+        # Reorder columns in dataframe, sort by state name and reset index
+        dtstats_df = dtstats_df[['Country', 'Districts', 'Communes', 'Cashew_Yield']]
+        dtstats_df = dtstats_df.sort_values(by=['Districts']).reset_index(drop=True)
+
+        # change state names from upper case to title case!!
+        dtstats_df['Districts'] = dtstats_df['Districts'].str.title()
+
+
+        list_global = []
+        for item in list(ben_yield_GEO['Code']):
+            if item in list(ben_yield['Code']):
+                list_global.append(item)
+                
+        GEO_id_tuple = []
+        for unique_id in list_global:
+            GEO_id_tuple.append((list(ben_yield_GEO[ben_yield_GEO['Code']==unique_id]['Local shape ID or coordinates'])[0], unique_id))
+            
+        special_id_tuple = []
+        special_id = []
+        for (id_u, code_u) in GEO_id_tuple:
+            if id_u in list(alteia_df['Code']):
+                special_id_tuple.append((id_u, code_u))
+                special_id.append(id_u)
+
+
+        basemaps = {
+                    'Google Maps': folium.TileLayer(
+                        tiles = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                        attr = 'Google',
+                        name = 'Maps',
+                        max_zoom =18,
+                        overlay = True,
+                        control = False
+                    ),
+                    'Google Satellite': folium.TileLayer(
+                        tiles = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+                        attr = 'Google',
+                        name = 'Satellite View',
+                        max_zoom = 18,
+                        overlay = True,
+                        show=False,
+                        control = True
+                    ),
+                    'Google Terrain': folium.TileLayer(
+                        tiles = 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+                        attr = 'Google',
+                        name = 'Google Terrain',
+                        overlay = True,
+                        control = True
+                    ),
+                    'Google Satellite Hybrid': folium.TileLayer(
+                        tiles = 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+                        attr = 'Google',
+                        name = 'Google Satellite',
+                        overlay = True,
+                        control = True
+                    ),
+                    'Esri Satellite': folium.TileLayer(
+                        tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                        attr = 'Esri',
+                        name = 'Esri Satellite',
+                        overlay = True,
+                        control = True
+                    )
+                }
         
         m = folium.Map(
             location=[9.0, 2.4],
